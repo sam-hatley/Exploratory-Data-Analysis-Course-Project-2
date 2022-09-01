@@ -95,6 +95,50 @@ The requirements are clear that each plot needs to have an associated _*.R_ file
 
 ### Data cleaning
 
+As above, I want to take care of the cleanup and filtering in a separate _*.R_ file, which I'll call with variables when I'm actually making these plots. All of the below will be handled by the [data.R](data.R) script.
+
+we'll start by taking a look at the actual data with a ```summary()``` call:
+```
+     fips               SCC             Pollutant           Emissions            type                year     
+ Length:6497651     Length:6497651     Length:6497651     Min.   :     0.0   Length:6497651     Min.   :1999  
+ Class :character   Class :character   Class :character   1st Qu.:     0.0   Class :character   1st Qu.:2002  
+ Mode  :character   Mode  :character   Mode  :character   Median :     0.0   Mode  :character   Median :2005  
+                                                          Mean   :     3.4                      Mean   :2004  
+                                                          3rd Qu.:     0.1                      3rd Qu.:2008  
+                                                          Max.   :646952.0                      Max.   :2008 
+```
+
+Emissions is a bit troubling, as I cannot imagine why the range for emissions would be so great. Before doing anything, I will need to convert the year to a date.
+
+Taking a look at the data would be useful, so I've tried to make a quick scatterplot with qplot: with the amount of data, this is exceedingly slow. Others have recommended the package _scattermore_ to speed things up, so we tried that out. The original data is hard to read, so the right chart is a comparison with the log of emissions.
+
+```R
+library(ggplot2)
+library(scattermore)
+library(patchwork)
+
+pl1 = ggplot(pm0, aes(x=year, y=Emissions)) + geom_scattermore(pointsize = 2)
+pl2 = ggplot(pm0, aes(x=year, y=log10(Emissions))) + geom_scattermore(pointsize = 2)
+pl1 + pl2
+```
+
+![Scattermore](images/scattermore.png)
+
+Looks as if there are only a handful of high points, but quite a few zeros:
+
+```R
+dim(pm0[Emissions > 10000])
+dim(pm0[Emissions > 10000])
+```
+```
+[1] 328494      6
+[1] 37  6
+```
+
+
+
+
+
 ### Total Emissions
 
 ### Baltimore City Emissions
