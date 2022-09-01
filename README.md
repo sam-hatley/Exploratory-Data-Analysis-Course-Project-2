@@ -8,7 +8,15 @@
   - [Observations set](#observations-set)
   - [Sources Set](#sources-set)
 - [Methodology](#Methodology)
+  - [Data Cleaning](#data-cleaning)
+  - [Total Emissions](#total-emissions)
+  - [Baltimore City Emissions](#baltimore-city-emissions)
+  - [Type Emissions](#type-emissions)
+  - [US Coal Emissions](#us-coal-emissions)
+  - [Motor Vehicle Sources](#Motor-Vehicle-Sources)
+  - [Baltimore vs LA](#Baltimore-vs-LA)
 - [Results](#Results)
+- [Instructions & Files](#instructions-files)
 
 ## Requirements
 
@@ -60,6 +68,7 @@ Overall, this data set looks like this:
 
 ### Sources set
 
+The first three columns of this data set looks like this:
 
 ```
        SCC Data.Category                                                                 Short.Name
@@ -70,6 +79,7 @@ Overall, this data set looks like this:
 5 10100203         Point                   Ext Comb /Electric Gen /Bituminous Coal /Cyclone Furnace
 6 10100204         Point                   Ext Comb /Electric Gen /Bituminous Coal /Spreader Stoker
 ```
+In total, there are 15 columns:
 
 ```
  [1] "SCC"                 "Data.Category"       "Short.Name"          "EI.Sector"           "Option.Group"        "Option.Set"         
@@ -77,6 +87,26 @@ Overall, this data set looks like this:
 [13] "Created_Date"        "Revised_Date"        "Usage.Notes"        
 ```
 
+This set is only really necessary in questions 4 & 5, when comparing emissions by source.
+
 ## Methodology
 
+The requirements are clear that each plot needs to have an associated _*.R_ file.
+
+### Data cleaning
+
+### Total Emissions
+
+### Baltimore City Emissions
+
+### Type Emissions
+
+### US Coal Emissions
+
+### Motor Vehicle Sources
+
+### Baltimore vs LA
+
 ## Results
+
+## Instructions & Files
