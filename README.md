@@ -26,7 +26,7 @@
 ### Questions
 > You must address the following questions and tasks in your exploratory analysis. For each question/task you will need to make a single plot. Unless specified, you can use any plotting system in R to make your plot.
 >1. Have total emissions from PM2.5 decreased in the United States from 1999 to 2008? Using the **base** plotting system, make a plot showing the total PM2.5 emission from all sources for each of the years 1999, 2002, 2005, and 2008.
->2. Have total emissions from PM2.5 decreased in the *B*altimore City, Maryland** ```fips == "24510``` from 1999 to 2008? Use the **base** plotting system to make a plot answering this question.
+>2. Have total emissions from PM2.5 decreased in the **Baltimore City, Maryland** ```fips == "24510``` from 1999 to 2008? Use the **base** plotting system to make a plot answering this question.
 >3. Of the four types of sources indicated by the ```type (point, nonpoint, onroad, nonroad)``` variable, which of these four sources have seen decreases in emissions from 1999–2008 for **Baltimore City**? Which have seen increases in emissions from 1999–2008? Use the **ggplot2** plotting system to make a plot answer this question.
 >4. Across the United States, how have emissions from coal combustion-related sources changed from 1999–2008?
 >5. How have emissions from motor vehicle sources changed from 1999–2008 in **Baltimore City**?
@@ -181,6 +181,17 @@ barplot(pmsum$emissions,pmsum$year, names=pmsum$year,
 ![plot1](images/plot1.png)
 
 ### Baltimore City Emissions
+
+>2. Have total emissions from PM2.5 decreased in the **Baltimore City, Maryland** ```fips == "24510``` from 1999 to 2008? Use the **base** plotting system to make a plot answering this question.
+
+This won't be much more difficult than the above: we'll read in the data, filter it by the fips code given above, and spit out a bar chart. We'll just need to amend the code above with:
+
+```R
+balt = pm0[fips == "24510"]
+```
+And we'll fetch a graph using the values in "balt". Adding a bit of color for color.
+
+![plot2](images/plot2.png)
 
 ### Type Emissions
 
