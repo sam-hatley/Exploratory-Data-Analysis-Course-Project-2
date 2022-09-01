@@ -9,6 +9,9 @@
   - [Sources Set](#sources-set)
 - [Methodology](#Methodology)
   - [Data Cleaning](#data-cleaning)
+    - [Dealing with outliers](#dealing-with-outliers)
+    - [Filtering by City](#filtering-by-city)
+    - [Filtering by Year](#filtering-by-year)
   - [Total Emissions](#total-emissions)
   - [Baltimore City Emissions](#baltimore-city-emissions)
   - [Type Emissions](#type-emissions)
@@ -110,7 +113,13 @@ we'll start by taking a look at the actual data with a ```summary()``` call:
 
 Emissions is a bit troubling, as I cannot imagine why the range for emissions would be so great. Before doing anything, I will need to convert the year to a date.
 
-Taking a look at the data would be useful, so I've tried to make a quick scatterplot with qplot: with the amount of data, this is exceedingly slow. Others have recommended the package _scattermore_ to speed things up, so we tried that out. The original data is hard to read, so the right chart is a comparison with the log of emissions.
+Ultimately, there's little that actually needs to be "cleaned" in this data set. To process this, we need to ensure that:
+- Outliers have been dealt with
+- We can easily filter for year, location and type
+
+#### Dealing with outliers
+
+Taking a look at the data would be useful, so I've tried to make a quick scatterplot with qplot: with the amount of data, this is exceedingly slow. Others have recommended the package _scattermore_ to speed things up, so I used that instead. The original data is hard to read, so the right chart is a comparison with the log of emissions. (A box plot might be more ordinary in this case, but I'm using scattermore for the sake of speed.)
 
 ```R
 library(ggplot2)
@@ -135,11 +144,41 @@ dim(pm0[Emissions > 10000])
 [1] 37  6
 ```
 
+Ultimately I'm not going to do anything regarding the outliers, for a few reasons:
+- From the information given, it's not clear that these are errors
+- There is no requirement to take such action on the data
+- I want the output to look as similar to other outputs as possible
 
+#### Filtering by City
 
+I want to start by city to reduce as much data as possible: as we're already aware that we're only considering data from two places
 
+#### Filtering by Year
 
 ### Total Emissions
+
+>1. Have total emissions from PM2.5 decreased in the United States from 1999 to 2008? Using the **base** plotting system, make a plot showing the total PM2.5 emission from all sources for each of the years 1999, 2002, 2005, and 2008.
+
+Originally, I expected this to be a bit more difficult, given the gaps in the years, but our data only includes those years:
+
+```R
+unique(pm0[,year])
+```
+```
+[1] 1999 2002 2005 2008
+```
+
+This will be the simplest plot to make, as we're just going to be creating a sum for each year, and plotting this sum. We'll use aggregate to sum each year, and plot with the base _barplot_ function. 
+
+```R
+pmsum = aggregate(pm0$Emissions, by=list(year=pm0$year),sum)
+
+barplot(pmsum$emissions,pmsum$year, names=pmsum$year,
+        xlab = "Year", ylab = "Emissions", 
+        main = "Total Emissions by Year")
+```
+
+![plot1](images/plot1.png)
 
 ### Baltimore City Emissions
 

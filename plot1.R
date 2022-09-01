@@ -1,7 +1,8 @@
 library(dplyr)
 
 #Import data
-source("Data.R")
+pm0 = readRDS("./data/summarySCC_PM25.rds")
+pm0 = data.table::as.data.table(pm0)
 
 #Aggregating the data
 pmsum = aggregate(pm0$Emissions, by=list(year=pm0$year),sum)
