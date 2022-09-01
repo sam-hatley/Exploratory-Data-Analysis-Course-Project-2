@@ -303,7 +303,7 @@ carplot = ggplot(carsagg, aes(x = factor(Year), y = Emissions)) + geom_col(fill 
 carplot + facet_grid(. ~ Cat)
 ```
 
-![plot6](images/plot6.png)
+![plot6](images/plot5.png)
 
 ### Baltimore vs LA
 
@@ -331,7 +331,7 @@ laplot = ggplot(laagg, aes(x = factor(Year), y = x)) + geom_col(fill = "red") + 
 bostplot + laplot
 ```
 
-![plot6](plot6.png)
+![plot6](images/plot6.png)
 
 ## Instructions
 
