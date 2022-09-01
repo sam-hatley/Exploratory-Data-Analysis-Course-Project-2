@@ -10,16 +10,13 @@
 - [Methodology](#Methodology)
   - [Data Cleaning](#data-cleaning)
     - [Dealing with outliers](#dealing-with-outliers)
-    - [Filtering by City](#filtering-by-city)
-    - [Filtering by Year](#filtering-by-year)
   - [Total Emissions](#total-emissions)
   - [Baltimore City Emissions](#baltimore-city-emissions)
   - [Type Emissions](#type-emissions)
   - [US Coal Emissions](#us-coal-emissions)
   - [Motor Vehicle Sources](#Motor-Vehicle-Sources)
   - [Baltimore vs LA](#Baltimore-vs-LA)
-- [Results](#Results)
-- [Instructions & Files](#instructions-files)
+- [Instructions](#instructions)
 
 ## Requirements
 
@@ -94,11 +91,9 @@ This set is only really necessary in questions 4 & 5, when comparing emissions b
 
 ## Methodology
 
-The requirements are clear that each plot needs to have an associated _*.R_ file. What I'd like to do is create a separate file that just cleans and parses the data according to the requirements of each question, which I can then call from each file, rather than needing to duplicate work.
 
 ### Data cleaning
 
-As above, I want to take care of the cleanup and filtering in a separate _*.R_ file, which I'll call with variables when I'm actually making these plots. All of the below will be handled by the [data.R](data.R) script.
 
 we'll start by taking a look at the actual data with a ```summary()``` call:
 ```
@@ -149,11 +144,6 @@ Ultimately I'm not going to do anything regarding the outliers, for a few reason
 - There is no requirement to take such action on the data
 - I want the output to look as similar to other outputs as possible
 
-#### Filtering by City
-
-I want to start by city to reduce as much data as possible: as we're already aware that we're only considering data from two places
-
-#### Filtering by Year
 
 ### Total Emissions
 
@@ -225,6 +215,8 @@ bplot = ggplot(balt, aes(x = factor(year), y = Emissions)) + geom_col() + facet_
 
 ### US Coal Emissions
 
+[R File](plot4.R)
+
 >4. Across the United States, how have emissions from coal combustion-related sources changed from 1999–2008?
 
 We're finally getting to the utility of the SCC dataset, so we'll need to take a look at that to understand what SC codes are related to coal. Searching among columns, _EI.Sector_ classifies each type of data source, so we'll filter this using the dplyr package.
@@ -250,8 +242,99 @@ coalplot + labs(title = "Coal Emissions", x = "Emissions",  y = "Year") + geom_c
 
 ### Motor Vehicle Sources
 
+[R File](plot5.R)
+
+>5. How have emissions from motor vehicle sources changed from 1999–2008 in **Baltimore City**?
+
+This question is the same as the above, asking for a different source and filtering by city. We'll start by looking at the codes available to us in scc:
+
+```R
+unique(scc$EI.Sector)
+```
+```
+...                  
+[21] Mobile - On-Road Gasoline Light Duty Vehicles      Mobile - On-Road Gasoline Heavy Duty Vehicles     
+[23] Mobile - On-Road Diesel Light Duty Vehicles        Mobile - On-Road Diesel Heavy Duty Vehicles       
+[25] Mobile - Non-Road Equipment - Gasoline             Mobile - Non-Road Equipment - Other               
+[27] Mobile - Non-Road Equipment - Diesel               Mobile - Aircraft                                 
+[29] Mobile - Commercial Marine Vessels                 Mobile - Locomotives                              
+...
+59 Levels: Agriculture - Crops & Livestock Dust Agriculture - Fertilizer Application Agriculture - Livestock Waste ... Waste Disposal
+```
+
+59 Levels, of which 21-30 are in regards to mobility. We _could_ sort these by hand, but thankfully, all vehicles contain the term "Vehicles", which is easy to grep for.
+
+```R
+carcodes = scc %>% filter(grepl('Vehicles', EI.Sector, ignore.case = T))
+cars = pm0 %>% filter(fips == "24510" & pm0$SCC %in% carcodes$SCC) 
+```
+with this filtered set, I'd like to include the _EI.Sector_ values from scc, so we can see how the types of vehicle emissions have changed over the years. We'll start out by making the sector types more readable, as the original values are quite long:
+```R
+carcodes$EI.Sector = as.character(carcodes$EI.Sector)
+carcodes$EI.Sector[carcodes$EI.Sector == "Mobile - On-Road Gasoline Light Duty Vehicles"] <- "Light Gas"
+carcodes$EI.Sector[carcodes$EI.Sector == "Mobile - On-Road Gasoline Heavy Duty Vehicles"] <- "Heavy Gas"
+carcodes$EI.Sector[carcodes$EI.Sector == "Mobile - On-Road Diesel Light Duty Vehicles"] <- "Light Diesel"
+carcodes$EI.Sector[carcodes$EI.Sector == "Mobile - On-Road Diesel Heavy Duty Vehicles"] <- "Heavy Diesel"
+carcodes$EI.Sector = as.factor(carcodes$EI.Sector)
+```
+What we need from the data is the category that we just made, the emissions total, and the year, and we'll need to match the data between two data frames. I'll start by reducing _carcodes_ to just the EI.Sector and SCC for the sake of brevity. Later, I'll build a new data frame, pulling emissions and year from the original cars data frame, and using ```match()``` to match sc codes in cars with sc codes in carcodes, and return the second column (the named category) in carcodes where there is a match.
+
+```R
+carcodes = carcodes[c("SCC","EI.Sector")]
+cars = data.frame(Emissions = cars$Emissions,Cat = carcodes[match(cars$SCC,carcodes$SCC),2], Year = cars$year)
+head(cars)
+```
+```
+  Emissions       Cat Year
+1      7.38 Light Gas 1999
+2      2.78 Light Gas 1999
+3     11.76 Light Gas 1999
+4      3.50 Light Gas 1999
+5      1.32 Light Gas 1999
+6      5.58 Light Gas 1999
+```
+
+From here, it's the same process as we did earlier to group by category and summarise.
+
+```R
+carsagg = cars %>% group_by(Year, Cat) %>% summarize(Emissions = sum(Emissions))
+
+carplot = ggplot(carsagg, aes(x = factor(Year), y = Emissions)) + geom_col(fill = "blue")
+carplot + facet_grid(. ~ Cat)
+```
+
+![plot6](images/plot6.png)
+
 ### Baltimore vs LA
 
-## Results
+[R File](plot6.R)
 
-## Instructions & Files
+>6. Compare emissions from motor vehicle sources in **Baltimore City** with emissions from motor vehicle sources in **Los Angeles County**, California ```fips == "06037"```. Which city has seen greater changes over time in motor vehicle emissions?
+
+For the sake of readability, we'll use overall totals between LA and Boston, which simplifies things greatly:
+
+```R
+bost = pm0 %>% filter(fips == "24510" & pm0$SCC %in% carcodes$SCC) 
+la = pm0 %>% filter(fips == "06037" & pm0$SCC %in% carcodes$SCC) 
+
+
+bostagg = aggregate(bost$Emissions, by = list(Year = bost$year), sum)
+laagg = aggregate(la$Emissions, by = list(Year = la$year), sum)
+```
+
+The ```patchwork()``` package makes short work of combining the graphs.
+
+```R
+library(patchwork)
+bostplot = ggplot(bostagg, aes(x = factor(Year), y = x)) + geom_col(fill = "blue") + labs(title = "Boston", x = "Year", y = "Emissions")
+laplot = ggplot(laagg, aes(x = factor(Year), y = x)) + geom_col(fill = "red") + labs(title = "LA", x = "Year", y = "Emissions")
+bostplot + laplot
+```
+
+![plot6](plot6.png)
+
+## Instructions
+
+1. This project relies on the libraries _dplyr_, _ggplot2_, and _patchwork_, so these must be installed for the project to function properly. This can be done with a console command: ```install.packages("dplyr")```, and so on.
+2. This README provides greater detail to each of the associated files and the methodology, each associated _*.R_ file is linked below the chapter heading.
+3. Results can be duplicated by executing the _*.R_ file associated with each chapter.
