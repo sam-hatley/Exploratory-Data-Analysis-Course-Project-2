@@ -33,4 +33,4 @@ carplot = ggplot(carsagg, aes(x = factor(Year), y = Emissions)) + geom_col(fill 
 carplot + facet_grid(. ~ Cat)
 
 #Save the plot
-ggsave("images/plot5.png", height = 800, width = 800, units = "px", dpi = 100)
+ggsave("images/plot5.png", height = 600, width = 800, units = "px", dpi = 100)
