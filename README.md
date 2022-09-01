@@ -5,6 +5,8 @@
   - [Questions](#Questions)
   - [Plots](#Plots)
 - [Data](#Data)
+  - [Observations set](#observations-set)
+  - [Sources Set](#sources-set)
 - [Methodology](#Methodology)
 - [Results](#Results)
 
@@ -21,12 +23,59 @@
 
 ### Plots
 
->For each plot youo should:
+>For each plot you should:
 >- Construct the plot and save it to a PNG file.
 >- Create a separate R code file (**plot1.R**, **plot2.R**, etc.) that constructs the corresponding plot, i.e. code in plot1.R constructs the plot1.png plot. Your code file should include code for reading the data so that the plot can be fully reproduced. You must also include the code that creates the PNG file. Only include the code for a single plot (i.e. plot1.R should only include code for producing plot1.png)
 >- Upload the PNG file on the Assignment submission page
 >- Copy and paste the R code from the corresponding R file into the text box at the appropriate point in the peer assessment.
+
 ## Data
+
+The data was provided in a zip file available at [this link](https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip), and contained two _\*.rds_ files. These can be readily read in via ```readRDS("./data/filename")```.
+
+The two files have different purposes: the _summarySCC\_PM25.rds_ file contains the observations, while the _Source\_Classification\_Code.rds_ file provides expanded definitions of terms refered to in the first file.
+
+### Observations set
+
+Our first data set has nearly 6.5 million observations and six variables, described in the assignment requirements:
+
+>- **fips**: a five-digit number (represented as a string) indicating the U.S. County
+>- **SCC**: The name of the source as indicated by a digit string (see source code classification table)
+>- **Pollutant**: A string indicating the pollutant
+>- **Emissions**: Amount of PM2.5 emitted, in tons
+>- **type**: The type of source (point, non-point, on-road, or non-road)
+>- **year**: The year of emissions recorded
+
+Overall, this data set looks like this:
+
+```
+    fips      SCC Pollutant Emissions  type year
+4  09001 10100401  PM25-PRI    15.714 POINT 1999
+8  09001 10100404  PM25-PRI   234.178 POINT 1999
+12 09001 10100501  PM25-PRI     0.128 POINT 1999
+16 09001 10200401  PM25-PRI     2.036 POINT 1999
+20 09001 10200504  PM25-PRI     0.388 POINT 1999
+24 09001 10200602  PM25-PRI     1.490 POINT 1999
+```
+
+### Sources set
+
+
+```
+       SCC Data.Category                                                                 Short.Name
+1 10100101         Point                   Ext Comb /Electric Gen /Anthracite Coal /Pulverized Coal
+2 10100102         Point Ext Comb /Electric Gen /Anthracite Coal /Traveling Grate (Overfeed) Stoker
+3 10100201         Point       Ext Comb /Electric Gen /Bituminous Coal /Pulverized Coal: Wet Bottom
+4 10100202         Point       Ext Comb /Electric Gen /Bituminous Coal /Pulverized Coal: Dry Bottom
+5 10100203         Point                   Ext Comb /Electric Gen /Bituminous Coal /Cyclone Furnace
+6 10100204         Point                   Ext Comb /Electric Gen /Bituminous Coal /Spreader Stoker
+```
+
+```
+ [1] "SCC"                 "Data.Category"       "Short.Name"          "EI.Sector"           "Option.Group"        "Option.Set"         
+ [7] "SCC.Level.One"       "SCC.Level.Two"       "SCC.Level.Three"     "SCC.Level.Four"      "Map.To"              "Last.Inventory.Year"
+[13] "Created_Date"        "Revised_Date"        "Usage.Notes"        
+```
 
 ## Methodology
 
