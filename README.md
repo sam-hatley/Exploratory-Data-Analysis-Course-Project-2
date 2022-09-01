@@ -157,6 +157,8 @@ I want to start by city to reduce as much data as possible: as we're already awa
 
 ### Total Emissions
 
+[R File](plot1.R)
+
 >1. Have total emissions from PM2.5 decreased in the United States from 1999 to 2008? Using the **base** plotting system, make a plot showing the total PM2.5 emission from all sources for each of the years 1999, 2002, 2005, and 2008.
 
 Originally, I expected this to be a bit more difficult, given the gaps in the years, but our data only includes those years:
@@ -182,6 +184,8 @@ barplot(pmsum$emissions,pmsum$year, names=pmsum$year,
 
 ### Baltimore City Emissions
 
+[R File](plot2.R)
+
 >2. Have total emissions from PM2.5 decreased in the **Baltimore City, Maryland** ```fips == "24510``` from 1999 to 2008? Use the **base** plotting system to make a plot answering this question.
 
 This won't be much more difficult than the above: we'll read in the data, filter it by the fips code given above, and spit out a bar chart. We'll just need to amend the code above with:
@@ -194,6 +198,30 @@ And we'll fetch a graph using the values in "balt". Adding a bit of color for co
 ![plot2](images/plot2.png)
 
 ### Type Emissions
+
+[R File](plot3.R)
+
+>3. Of the four types of sources indicated by the ```type (point, nonpoint, onroad, nonroad)``` variable, which of these four sources have seen decreases in emissions from 1999–2008 for **Baltimore City**? Which have seen increases in emissions from 1999–2008? Use the **ggplot2** plotting system to make a plot answer this question.
+
+This question is a bit more involved, as it requires a different package. Thankfully, the ggplot2 package is easy to use, and I've preferred it to the base plotting system. Filtering is the tricky part: there are two ways to do this, one is a bit more readable than the other:
+
+```R
+balt = pm0[fips == "24510"]
+balt = group_by(balt,year,type)
+balt = summarize(balt,Emissions = sum(Emissions))
+```
+Or, equivalently:
+```R
+balt = pm0 %>% filter(fips == "24510") %>% group_by(year,type) %>% summarize(Emissions = sum(Emissions))
+```
+
+Now, we feed this into ggplot2, using facets to plot points. I'm using the ```factor``` arguement for year, as without, ggplot2 wanted to plot the points halfway between years, rather than on the dot. geom_col will take care of most column-related measurements.
+
+```R
+bplot = ggplot(balt, aes(x = factor(year), y = Emissions)) + geom_col() + facet_grid(. ~ type)
+```
+
+![plot3](images/plot3.png)
 
 ### US Coal Emissions
 
