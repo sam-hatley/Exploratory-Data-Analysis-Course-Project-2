@@ -91,7 +91,7 @@ This set is only really necessary in questions 4 & 5, when comparing emissions b
 
 ## Methodology
 
-The requirements are clear that each plot needs to have an associated _*.R_ file.
+The requirements are clear that each plot needs to have an associated _*.R_ file. What I'd like to do is create a separate file that just cleans and parses the data according to the requirements of each question, which I can then call from each file, rather than needing to duplicate work.
 
 ### Data cleaning
 
