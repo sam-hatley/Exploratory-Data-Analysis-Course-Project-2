@@ -225,6 +225,29 @@ bplot = ggplot(balt, aes(x = factor(year), y = Emissions)) + geom_col() + facet_
 
 ### US Coal Emissions
 
+>4. Across the United States, how have emissions from coal combustion-related sources changed from 1999–2008?
+
+We're finally getting to the utility of the SCC dataset, so we'll need to take a look at that to understand what SC codes are related to coal. Searching among columns, _EI.Sector_ classifies each type of data source, so we'll filter this using the dplyr package.
+
+```R
+coal = scc %>% filter(grepl('Coal', EI.Sector, ignore.case = T))
+```
+This churns out a nice list of 99 codes. We'll subset the dataset looking for only matches with those codes:
+```R
+coal = subset(pm0, pm0$SCC %in% coal$SCC)
+```
+From here, we'll be using the same techniques as we did in the last question to put together a plot. We'll aggregate the data by year, and create a plot with ggplot2.
+
+```R
+coalagg = aggregate(coal$Emissions, by = list(Year = coal$year), sum)
+
+coalplot = ggplot(coalagg, aes(x = factor(Year), y = x))
+coalplot + labs(title = "Coal Emissions", x = "Emissions",  y = "Year") + geom_col(fill = "red")
+```
+
+![Plot4](images/plot4.png)
+
+
 ### Motor Vehicle Sources
 
 ### Baltimore vs LA
