@@ -19,4 +19,4 @@ coalplot = ggplot(coalagg, aes(x = factor(Year), y = x))
 coalplot + labs(title = "Coal Emissions", x = "Emissions",  y = "Year") + geom_col(fill = "red")
 
 #Save the plot
-ggsave("images/plot4.png")
+ggsave("images/plot4.png", height = 500, width = 500, units = "px", dpi = 150)
